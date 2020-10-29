@@ -1,0 +1,33 @@
+<div class='container textBox'>
+    <h1>Info About <%= fxn.capitalize(monName) %>, ID: <%= monId %></h1>
+    <div id='whoDat'>
+        <img id= 'pic' class='animate__animated animate__bounceInDown' src='<%- monData.sprites.other.dream_world.front_default %>' > 
+    </div>
+    
+
+    <div id='outside'>
+        <div class='inside'>
+            <h2>Abilities:</h2>
+                <% monData.abilities.forEach(ability=> { %>
+                    <p><%= ability.ability.name %></p>
+                <% }) %>
+        </div>
+        <div class='inside'>
+            <h2>Height:</h2>
+            <p><%= monData.height %></p>
+        </div>
+    </div>
+    
+    
+    <h2>Moves: </h2>
+    <ul>
+        <% monData.moves.forEach(move=> { %>
+            <% let moves= []; 
+            moves.push(`${move.move.name}, `); %>
+            <%= moves %>
+            <!-- <li> <%#= move.move.name %> </li> -->
+        <% }) %>
+    </ul>
+    
+
+</div>

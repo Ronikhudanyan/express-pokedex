@@ -1,0 +1,15 @@
+<div class='container'>
+    <h1>Favorite Pokemons</h1>
+    <ul>
+        <% favList.forEach(pokemon=> { %>
+            <div class= 'favBox well'>
+                <li> 
+                    <a href='/pokemon/<%= pokemon.id %>'><%= pokemon.id %>: <%= fxn.capitalize(pokemon.name) %> </a>
+                    <form method='POST' action='/pokemon/<%= pokemon.id %>/?_method=DELETE'>
+                        <input type='submit' value='remove' id='inputBtn'>
+                    </form>
+                </li>
+            </div>
+        <% }) %>
+    </ul>
+</div>
