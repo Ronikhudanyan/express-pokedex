@@ -1,68 +1,54 @@
 const express = require('express');
 const router = express.Router();
-const db= require('../models');
-//const { default: Axios } = require('axios');
-const axios= require('axios');
+const db = require('../models');
+const axios = require('axios');
 
-const helper= require('../helpers');
 
+router.get('/:idx', function(req, res) {
+  // TODO: Get all records from the DB and render to view
+  const pokemonUrl = `http://pokeapi.co/api/v2/pokemon/${req.params.idx}`;
+  axios.get(pokemonUrl)
+  .then(response=>{
+    res.render('show', {pokemon: response.data})
+    // res.render('/faves',
+    // {pokemon: response.data})
+    console.log(response.data)
+  })
+  .catch(err=>{
+    console.log(err)
+  });
+})
 
 // GET /pokemon - return a page with favorited Pokemon
 router.get('/', function(req, res) {
   // TODO: Get all records from the DB and render to view
   db.pokemon.findAll()
-  .then(foundMons=> {
-    //console.log('here are the users: ', foundMons);
-    res.render('favorite', {favList: foundMons, fxn: helper}); //pass the helper with ejs render
+  .then(favorites => {
+    res.render('/faves', {favorites: favorites});
+
   })
-  
+  .catch(err =>{
+    console.log('You have an error: ', err)
+  })
 });
 
 // POST /pokemon - receive the name of a pokemon and add it to the database
 router.post('/', function(req, res) {
-  
+  console.log(req.body.name)
+  // TODO: Get form data and add a new record to DB
   db.pokemon.findOrCreate({
-    where: {name: req.body.name}
+    where: {name: req.body.name},
+    defaults: {name: req.body.name}
   })
-  .then(([foundOrCreatedMon, created])=> {
-    console.log('the pokemon existed', !created);
-    
-    res.redirect('/pokemon');
+  .then(([created, wasCreated])=>{
+    console.log('Created new fave')
+    res.redirect('/pokemon')
+    //res.render(created)
   })
+  .catch(err =>{
+    console.log('You got an error dummy: ', err)
+  })
+  // res.send(req.body)
 });
-
-
-router.get('/:id', (req, res)=> {
- 
-  db.pokemon.findOne({
-    where: {id: req.params.id}
-  })
-  .then(foundMon=> {
-    
-    console.log(foundMon.name);
-    axios.get(`https://pokeapi.co/api/v2/pokemon/${foundMon.name.toLowerCase()}`)
-    .then(response=> {
-      
-      res.render('show', {monId: req.params.id, monName: foundMon.name, monData: response.data, fxn: helper}); //pass the helper with ejs render
-    })
-    .catch(err=> {
-      console.log('axios.then error: ', err);
-    })
-  })
-  .catch(error=> {
-    console.log('db.then error: ', error);
-  })
-})
-
-//delete route 
-router.delete('/:id', (req, res)=> {
-  db.pokemon.destroy({
-    where: {id: req.params.id}
-  })
-  .then(removedRows=> {
-    console.log(removedRows, ' row(s) was removed');
-    res.redirect('/pokemon');
-  })
-})
 
 module.exports = router;
